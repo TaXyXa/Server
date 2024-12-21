@@ -1,0 +1,12 @@
+/build
+
+.log
+.tmp
+.swp
+.bak
+.txt
+
+.vscode/
+.o
+.a
+.so

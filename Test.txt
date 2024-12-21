@@ -1,0 +1,6 @@
+telnet 127.0.0.1 8001
+{"type" : "GetConfiguration"}
+telnet 127.0.0.1 8001
+{"type" : "SetConfiguration", "ip" : "192.168.50.1", "mask" : "24"}
+telnet 192.168.50.1 8001
+{"type" : "GetConfiguration"}
