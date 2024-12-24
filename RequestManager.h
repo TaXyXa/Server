@@ -19,8 +19,6 @@ private:
 
     std::string SetConfiguration(const std::string& ip, const std::string& mask);
 
-    std::string GetConfiguration() const;
-
     nlohmann::json ParseRequest(const char* request);
 
 };

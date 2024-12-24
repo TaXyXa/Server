@@ -19,35 +19,23 @@ std::string RequestManager::CompliteRequest(const char *request)
         map_request.emplace(key, value);
     }
     auto type_iter = map_request.find("type");
-    if (type_iter == map_request.end()) 
-    {
+    if (type_iter == map_request.end()) {
         return "Unknow request type.";
     }
-
-    if (type_iter->second == "GetConfiguration") 
-    {
-        return GetConfiguration();
-    } 
-    else if (type_iter->second == "SetConfiguration") 
-    {
+    if (type_iter->second == "GetConfiguration") {
+        return server_->GetConfiguration();
+    } else if (type_iter->second == "SetConfiguration") {
         auto ip_iter = map_request.find("ip");
         auto mask_iter = map_request.find("mask");
         if (ip_iter == map_request.end() || mask_iter == map_request.end()) {
             return "Not find ip or mask.";
         }
+        server_->RestartServer();
         return server_->SetConfiguration(ip_iter->second, mask_iter->second);
-    } 
-    else if (type_iter->second == "Error") 
-    {
+    } else if (type_iter->second == "Error") {
         return "Parse request error.";
     }
     return "Unknow error.";
-}
-
-
-std::string RequestManager::GetConfiguration() const
-{
-    return "Get.";
 }
 
 nlohmann::json RequestManager::ParseRequest(const char *request)

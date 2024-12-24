@@ -1,10 +1,10 @@
 #pragma once
 
+#include <atomic>
 #include <iostream>
+#include <netinet/in.h>
 #include <string>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <atomic>
 
 #include "ServerManager.h"
 
@@ -22,13 +22,14 @@ public:
 
     void CheckConnections();
 
+    void OffServer();
 
 private:
     ServerManager* server_;
     int server_fd;
     sockaddr_in address_;
     std::atomic<bool> IsListening = true;
-
+    std::vector<std::thread> threads_;
     void CompleteCommand(int socket_id);
 
 };

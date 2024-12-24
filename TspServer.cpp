@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 #include <string>
 #include <cstring>
 #include <sys/socket.h>
@@ -12,8 +13,9 @@
 TCPServer::TCPServer(ServerManager& server, sockaddr_in new_address) 
 : server_(&server), address_(new_address)
 {
-    Initialization();
-    CheckConnections();
+    std::cout << "Make tcp" << std::endl;
+    //Initialization();
+    //CheckConnections();
 }
 
 TCPServer::~TCPServer() {
@@ -56,11 +58,6 @@ void TCPServer::CheckConnections() {
 
     int count = 0;
     while (IsListening) {
-        count++;
-        if (count > 5) {
-            IsListening = false;
-        }
-
         new_socket = accept(server_fd, (sockaddr*)&address, (socklen_t*)&address_lenght);
         if (new_socket < 0) {
             //error
@@ -68,14 +65,23 @@ void TCPServer::CheckConnections() {
             continue;
         }
         std::cout << "TCP: New Connection!" << std::endl;
-        std::thread new_thread(&TCPServer::CompleteCommand, this, new_socket);
-        new_thread.detach();
+        //threads_.emplace_back(&TCPServer::CompleteCommand, this, new_socket);
+        CompleteCommand(new_socket);
     }
     std::cout << "TCP: Server no listening!" << std::endl;
+
+    for (std::thread& th : threads_) {
+        if (th.joinable()) {
+            th.join();
+        }
+    }
+}
+
+void TCPServer::OffServer() {
+    IsListening = false;
 }
 
 void TCPServer::CompleteCommand(int socket_id) {
-    //read
     char buffer[1000] {0};
     int read_num = read(socket_id, buffer, 1000);
     if (read_num<0) {
